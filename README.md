@@ -31,7 +31,11 @@ python train.py --dataset hc3
 ```
 
 ### Defense against vote rigging
-For vote filtering, you can run the following script and specify the parameter ```--filter_threshold `` to control the filtering threshold.
+To detect malicious users, you can run the following command:
+```
+python detect_malicious_users.py --rigging_mode omni_bt_diff
+```
+For vote filtering, you can run the following command and specify the parameter ```--filter_threshold `` to control the filtering threshold.
 ```
 python vote_filtering.py --rigging_mode omni_bt_diff --filter_threshold 0.8
 ```
