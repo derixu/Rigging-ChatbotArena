@@ -34,7 +34,7 @@ model_name_list = ['Llama-2-7b-chat-hf', 'Llama-2-13b-chat-hf', 'Meta-Llama-3-8B
                         'chatglm3-6b', 'zephyr-7b-beta', 'zephyr-7b-alpha', 'Phi-3-small-8k-instruct', \
                             'vicuna-7b-v1.3', 'mpt-7b-chat', 'openchat_3.5', 'WizardLM-13B-V1.2', 'SOLAR-10.7B-Instruct-v1.0']
 
-parser = argparse.ArgumentParser('dl detector')
+parser = argparse.ArgumentParser()
 
 parser.add_argument('--model-name', type=str, help='model name', default='FacebookAI/roberta-base')
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')

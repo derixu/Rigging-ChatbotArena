@@ -13,7 +13,7 @@ import os
 import cudf
 import json
 
-parser = argparse.ArgumentParser(description='Description of your program')
+parser = argparse.ArgumentParser()
 parser.add_argument('--rigging_mode', type=str, default='omni_bt_diff')
 parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument('--classifier_acc', type=float, default=1.0)
@@ -81,8 +81,8 @@ for target_model in args.model_name_list:
         final_rank = get_rank(final_ranking, target_model)
         result_dict[f'{target_model}_{int(vote_num)}'] = {'ori_rank': ori_rank, 'final_rank': final_rank}
     
-        os.makedirs('ranking_output/', exist_ok=True)
-        with open(f'ranking_output/{args.rigging_mode}.json', 'w') as f:
+        os.makedirs('voting_output/rigging_vo/', exist_ok=True)
+        with open(f'voting_output/rigging_vo/{args.rigging_mode}.json', 'w') as f:
             json.dump(result_dict, f, indent=4)
 
     

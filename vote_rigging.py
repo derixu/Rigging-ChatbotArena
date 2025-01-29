@@ -10,7 +10,7 @@ import os
 import cudf
 import json
 
-parser = argparse.ArgumentParser(description='Description of your program')
+parser = argparse.ArgumentParser()
 parser.add_argument('--rigging_mode', type=str, default='omni_bt_diff')
 parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument('--vote_num', type=int, default=20000)
