@@ -11,6 +11,74 @@ K = 4
 BASE = 10
 SCALE = 400
 
+
+def initialize_vh_vo(
+    model_name_sorted, competition_list, SCALE=400, BASE=10, INIT_RATING=1000, ptbl_win=None
+):
+    from sklearn.linear_model import LogisticRegression
+  
+   
+    pd_new = []
+    for _ in range(len(model_name_sorted)):
+        pd_new.append([0] * len(model_name_sorted))
+    if ptbl_win is None:
+        ptbl_win = pd.DataFrame(pd_new, index=model_name_sorted, columns=model_name_sorted)
+    
+    
+
+    for item in tqdm(competition_list):
+        # print(key)
+        model_a = item['model_a']
+        model_b = item['model_b']
+        winner = item['winner']
+
+        # winner = df.loc[key, 'winner']
+        if winner == 'model_a':
+            ptbl_win.loc[model_a, model_b] = ptbl_win.loc[model_a, model_b] + 2
+        elif winner == 'model_b':
+            ptbl_win.loc[model_b, model_a] = ptbl_win.loc[model_b, model_a] + 2
+        elif 'tie' in winner:
+            ptbl_win.loc[model_a, model_b] = ptbl_win.loc[model_a, model_b] + 1
+            ptbl_win.loc[model_b, model_a] = ptbl_win.loc[model_b, model_a] + 1
+
+    
+    models = pd.Series(np.arange(len(ptbl_win.index)), index=ptbl_win.index)
+    p = len(models)
+    X = np.zeros([p * (p - 1) * 2, p])
+    Y = np.zeros(p * (p - 1) * 2)
+    
+    cur_row = 0
+    sample_weights = []
+    for m_a in ptbl_win.index:
+        for m_b in ptbl_win.columns:
+            if m_a == m_b:
+                continue
+            # if nan skip
+            if math.isnan(ptbl_win.loc[m_a, m_b]) or math.isnan(ptbl_win.loc[m_b, m_a]):
+                continue
+            X[cur_row, models[m_a]] = +math.log(BASE)
+            X[cur_row, models[m_b]] = -math.log(BASE)
+            Y[cur_row] = 1.0
+            sample_weights.append(ptbl_win.loc[m_a, m_b])
+
+            X[cur_row + 1, models[m_a]] = math.log(BASE)
+            X[cur_row + 1, models[m_b]] = -math.log(BASE)
+            Y[cur_row + 1] = 0.0
+            sample_weights.append(ptbl_win.loc[m_b, m_a])
+            cur_row += 2
+    X = X[:cur_row]
+    Y = Y[:cur_row]
+   
+    np.save('data/data_x.npy', X)
+    np.save('data/data_y.npy', Y)
+    ptbl_win.to_csv('data/vh_win_matrix.csv')
+
+    lr = LogisticRegression(fit_intercept=False, penalty=None, tol=1e-6, warm_start=True)
+    lr.fit(X, Y, sample_weight=sample_weights)
+    elo_scores = SCALE * lr.coef_[0] + INIT_RATING
+    return pd.Series(elo_scores, index=models.index).sort_values(ascending=False), ptbl_win
+
+
 def preety_print_model_ratings(ratings):
     df = pd.DataFrame([
         [n, ratings[n]] for n in ratings.keys()
