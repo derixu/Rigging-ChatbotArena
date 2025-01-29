@@ -11,7 +11,7 @@ import cudf
 import json
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--mode', type=str, default='omni_bt_diff')
+parser.add_argument('--rigging_mode', type=str, default='omni_bt_diff')
 parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument('--classifier_acc', type=float, default=1.0)
 parser.add_argument('--filter_threshold', type=float, default=0.7)
@@ -48,7 +48,6 @@ for idx, key in enumerate(initial_ranking['Model'].keys()):
 
 
 result_dict = {}
-
 
 for target_model in args.model_name_list:
    
@@ -87,5 +86,5 @@ for target_model in args.model_name_list:
     result_dict[f'{target_model}'] = {'ori_rank': ori_rank, 'final_rank': final_rank}
 
     os.makedirs('voting_output/filtered_battles', exist_ok=True)
-    with open(f'voting_output/filtered_battles/{args.mode}_thre_{args.filter_threshold}.json', 'w') as f:
+    with open(f'voting_output/filtered_battles/{args.rigging_mode}_thre_{args.filter_threshold}.json', 'w') as f:
         json.dump(result_dict, f, indent=4)
