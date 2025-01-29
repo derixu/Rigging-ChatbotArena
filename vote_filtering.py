@@ -13,8 +13,6 @@ import json
 parser = argparse.ArgumentParser()
 parser.add_argument('--mode', type=str, default='omni_bt_diff')
 parser.add_argument('--beta', type=float, default=1.0)
-
-parser.add_argument('--seed', type=int, default=42)
 parser.add_argument('--classifier_acc', type=float, default=1.0)
 parser.add_argument('--filter_threshold', type=float, default=0.7)
 parser.add_argument('--model_name_list', nargs='+', default=['phi-3-mini-4k-instruct-june-2024'])
