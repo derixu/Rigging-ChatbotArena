@@ -147,8 +147,8 @@ def main():
         
         tot_dict[f'id_{idx}'] = result_dict
         
-        os.makedirs(f'training_data_classifier/{args.output_dir}1/', exist_ok=True)
-        with open(f'training_data_classifier/{args.output_dir}1/{model_name}.json', 'w') as f:
+        os.makedirs(f'training_data_classifier/{args.output_dir}/', exist_ok=True)
+        with open(f'training_data_classifier/{args.output_dir}/{model_name}.json', 'w') as f:
             json.dump(tot_dict, f, indent=4)
         if idx == args.tot_num-1:
             break
