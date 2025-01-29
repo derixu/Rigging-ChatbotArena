@@ -1,6 +1,5 @@
-from collections import defaultdict
 import os
-import math, copy
+import copy
 import numpy as np
 import pandas as pd
 pd.options.display.float_format = '{:.2f}'.format
@@ -26,7 +25,7 @@ SCALE = 400
 
 
 # Initialize the rigging environment
-X_initial, Y_initial, win_matrix_initial, sample_weights_ori = preprocess_data('data/initial_data_1.7m_0.9_portion.npy', 'data/initial_label_1.7m_0.9_portion.npy','data/initial_win_matrix_1.7m_0.9_portion.csv')
+X_initial, Y_initial, win_matrix_initial, sample_weights_ori = preprocess_data('data/data_x.npy', 'data/data_y.npy','data/vh_win_matrix.csv')
 model_name_sorted = []
 for model_name in win_matrix_initial.index:
     model_name_sorted.append(model_name) if model_name not in model_name_sorted else None
@@ -327,10 +326,10 @@ for target_model in args.model_name_list:
 
    
     os.makedirs('ranking_output/', exist_ok=True) 
-    os.makedirs('vote_output/', exist_ok=True)
+    os.makedirs('voting_output/', exist_ok=True)
 
     np.save(f'ranking_output/{target_model}_{args.rigging_mode}_acc_{args.classifier_acc}_prob_dec_{args.beta}.npy', np.array(rank_list))
-    with open(f'vote_output/{target_model}_{args.rigging_mode}_acc_{args.classifier_acc}_prob_dec_{args.beta}.json', 'w') as f:
+    with open(f'voting_output/{target_model}_{args.rigging_mode}_acc_{args.classifier_acc}_prob_dec_{args.beta}.json', 'w') as f:
         json.dump(battle_dict, f, indent=4)
 
 
