@@ -68,10 +68,11 @@ def main():
 
     print(model_name)
 
-    if os.path.exists(f'training_data_classifier/{args.output_dir}/{model_name}.json') and args.resume: #
+    if os.path.exists(f'./training_data_classifier/{args.output_dir}/{model_name}.json') and args.resume: #
         with open(f'{args.output_dir}/{model_name}.json') as f:
             tot_dict = json.load(f)
     else:
+        os.makedirs(f'./training_data_classifier/{args.output_dir}/', exist_ok=True)
         tot_dict = {}
     resume_point = len(tot_dict) - 1
     
@@ -147,7 +148,7 @@ def main():
         
         tot_dict[f'id_{idx}'] = result_dict
         
-        os.makedirs(f'training_data_classifier/{args.output_dir}/', exist_ok=True)
+       
         with open(f'training_data_classifier/{args.output_dir}/{model_name}.json', 'w') as f:
             json.dump(tot_dict, f, indent=4)
         if idx == args.tot_num-1:
