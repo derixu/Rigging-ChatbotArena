@@ -17,8 +17,7 @@ parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument('--vote_num', type=int, default=20000)
 parser.add_argument('--seed', type=int, default=2025)
 parser.add_argument('--classifier_acc', type=float, default=1.0)
-
-
+parser.add_argument('--model_name_list', nargs='+', default=['phi-3-mini-4k-instruct-june-2024'])
 args = parser.parse_args()
 
 K = 4
@@ -53,9 +52,8 @@ else:
 
 # --------------------------------------------------------------------------------------------------------------------
 
-model_name_list = ['llama-2-13b-chat']
 
-for target_model in model_name_list:
+for target_model in args.model_name_list:
     np.random.seed(args.seed)
     battle_dict = {}
     model_name_sorted_prob = {}
@@ -81,7 +79,7 @@ for target_model in model_name_list:
         vote_var = np.random.uniform()
         acc_var = np.random.uniform()
         # --------------------------------------------------------------------------------------------------------------------
-        # Voting strategies
+        # Rigging strategies
 
         if args.rigging_mode == 't_random' or args.rigging_mode == 't_tie':
             if (model_b == target_model or model_a == target_model) and acc_var <= args.classifier_acc:
