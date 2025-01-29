@@ -85,6 +85,6 @@ for target_model in args.model_name_list:
     
     result_dict[f'{target_model}'] = {'ori_rank': ori_rank, 'final_rank': final_rank}
 
-    os.makedirs('voting_output/filtered_battles', exist_ok=True)
-    with open(f'voting_output/filtered_battles/{args.rigging_mode}_thre_{args.filter_threshold}.json', 'w') as f:
+    os.makedirs('voting_output/filtered_votes', exist_ok=True)
+    with open(f'voting_output/filtered_votes/{args.rigging_mode}_thre_{args.filter_threshold}.json', 'w') as f:
         json.dump(result_dict, f, indent=4)
