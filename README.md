@@ -1,7 +1,7 @@
 ## Improving Your Model Ranking on Chatbot Arena by Vote Rigging
 
 ----
-<div align=center><img src=pics/demo.pdf  width="80%" height="60%"></div>
+<div align=center><img src=pics/demo.png  width="80%" height="60%"></div>
 
 ### Initialize your rigging environment
 Run the following command to set up your initial rigging environment, we separate the complete voting records into the historical votes (90%) and other users' votes (10%).
