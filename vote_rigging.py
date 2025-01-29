@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='Description of your program')
 parser.add_argument('--rigging_mode', type=str, default='omni_bt_diff')
 parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument('--vote_num', type=int, default=20000)
-parser.add_argument('--seed', type=int, default=42)
+parser.add_argument('--seed', type=int, default=2025)
 parser.add_argument('--classifier_acc', type=float, default=1.0)
 
 
@@ -56,7 +56,7 @@ else:
 model_name_list = ['llama-2-13b-chat']
 
 for target_model in model_name_list:
-
+    np.random.seed(args.seed)
     battle_dict = {}
     model_name_sorted_prob = {}
     rank_list = [get_rank(initial_ranking, target_model)]
@@ -214,34 +214,36 @@ for target_model in model_name_list:
                     battle_dict[f'idx_{idx}'] = {'model_a': model_a, 'model_b': model_b, 'winner': 'remove'}
                     continue
 
-            for key in final_ranking_noise['Model'].keys():
-                if final_ranking_noise.loc[key, 'Model'] == target_model:
-                    
-                    if key != 1:
-                        tmp_anchor_model = final_ranking_noise.loc[key-1, 'Model']
-                        tmp_anchor_model_rating = final_ranking_noise.loc[key-1, 'Elo rating']
-                    else:
-                        tmp_anchor_model = final_ranking_noise.loc[key+1, 'Model']
-                        tmp_anchor_model_rating = final_ranking_noise.loc[key+1, 'Elo rating']
-
-                    remove_rating = final_ranking_noise.loc[key, 'Elo rating'] - tmp_anchor_model_rating * diff_weight
-
-                
-            # else:
-                
-            #     for key in final_ranking['Model'].keys():
-            #         if final_ranking.loc[key, 'Model'] == target_model:
+                for key in final_ranking_noise['Model'].keys():
+                    if final_ranking_noise.loc[key, 'Model'] == target_model:
                         
-            #             if key != 1:
-            #                 tmp_anchor_model = final_ranking.loc[key-1, 'Model']
-            #                 tmp_anchor_model_rating = final_ranking.loc[key-1, 'Elo rating']
-            #             else:
-            #                 tmp_anchor_model = final_ranking.loc[key+1, 'Model']
-            #                 tmp_anchor_model_rating = final_ranking.loc[key+1, 'Elo rating']
+                        if key != 1:
+                            tmp_anchor_model = final_ranking_noise.loc[key-1, 'Model']
+                            tmp_anchor_model_rating = final_ranking_noise.loc[key-1, 'Elo rating']
+                        else:
+                            tmp_anchor_model = final_ranking_noise.loc[key+1, 'Model']
+                            tmp_anchor_model_rating = final_ranking_noise.loc[key+1, 'Elo rating']
 
-            #             remove_rating = final_ranking.loc[key, 'Elo rating'] - tmp_anchor_model_rating * diff_weight
+                        remove_rating = final_ranking_noise.loc[key, 'Elo rating'] - tmp_anchor_model_rating * diff_weight
+
+                
+            else:
+                
+                for key in final_ranking['Model'].keys():
+                    if final_ranking.loc[key, 'Model'] == target_model:
+                        
+                        if key != 1:
+                            tmp_anchor_model = final_ranking.loc[key-1, 'Model']
+                            tmp_anchor_model_rating = final_ranking.loc[key-1, 'Elo rating']
+                        else:
+                            tmp_anchor_model = final_ranking.loc[key+1, 'Model']
+                            tmp_anchor_model_rating = final_ranking.loc[key+1, 'Elo rating']
+
+                        remove_rating = final_ranking.loc[key, 'Elo rating'] - tmp_anchor_model_rating * diff_weight
             
-            
+
+                
+           
             for tmp_vote in ['model_a', 'model_b', 'tie']:
                 tmp_battle = {'model_a':pred_model_a, 'model_b':pred_model_b, 'winner': tmp_vote}
                 
