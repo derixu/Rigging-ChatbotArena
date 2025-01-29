@@ -1,11 +1,8 @@
 import argparse
 import torch
 import os
-from peft import PeftModel
-import random
 import json
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, AutoModel, AutoConfig
-import numpy as np
 from datasets import load_dataset
 
 parser = argparse.ArgumentParser()

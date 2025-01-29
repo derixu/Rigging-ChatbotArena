@@ -1,13 +1,11 @@
 import os
 import copy
-import numpy as np
 import pandas as pd
 pd.options.display.float_format = '{:.2f}'.format
 
 from utils import preety_print_model_ratings, get_rank, preprocess_data, compute_mle_elo_dict
 
 import argparse
-import cudf
 import json
 
 parser = argparse.ArgumentParser()
