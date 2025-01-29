@@ -30,4 +30,7 @@ With the prepared training corpus, try to run the following script to fine-tune 
 python train.py --dataset hc3
 ```
 
-
+### Defense against vote rigging
+```
+python vote_filtering.py --rigging_mode omni_bt_diff --filter_threshold 0.8
+```
