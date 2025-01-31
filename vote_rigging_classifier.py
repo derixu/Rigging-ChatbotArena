@@ -84,7 +84,7 @@ for model_id in model_name_sorted:
     tmp_response_list = {}
     model_id_raw = from_file_to_arena_map[model_id] 
   
-    file_name = f'./classifier/training_data_classifier/{args.dataset_name}/{model_id_raw}.json'
+    file_name = f'./classifier/rigging_data_classifier/{args.dataset_name}/{model_id_raw}.json'
     with open(file_name) as f:
         data = json.load(f)
         print(model_id)
