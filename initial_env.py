@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 
 # Load the JSON data from the local file
-if not os.path.exist('data/local_file_name.json'):
+if not os.path.exists('data/local_file_name.json'):
     url = "https://storage.googleapis.com/arena_external_data/public/clean_battle_20240814_public.json"
     response = requests.get(url)
 
