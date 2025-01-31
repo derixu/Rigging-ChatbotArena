@@ -47,3 +47,20 @@ For vote filtering, you can run the following command and specify the parameter 
 ```
 python vote_filtering.py --rigging_mode omni_bt_diff --filter_threshold 0.8
 ```
+
+----
+
+### Citation
+
+If you find our work interesting, please consider giving a star :star: and cite as:
+```
+@misc{min2025improvingmodelrankingchatbot,
+      title={Improving Your Model Ranking on Chatbot Arena by Vote Rigging}, 
+      author={Rui Min and Tianyu Pang and Chao Du and Qian Liu and Minhao Cheng and Min Lin},
+      year={2025},
+      eprint={2501.17858},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2501.17858}, 
+}
+```
