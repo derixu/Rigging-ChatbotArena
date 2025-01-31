@@ -7,7 +7,13 @@ pd.options.display.float_format = '{:.2f}'.format
 from utils import preety_print_model_ratings, initialize_vh_vo
 from tqdm import tqdm
 import json
+import argparse
 
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--classifier', action='store_true')
+args = parser.parse_args()
 
 
 # Load the JSON data from the local file
@@ -30,6 +36,26 @@ print("Before dedup: ", len(battles))
 battles = battles[battles["dedup_tag"].apply(lambda x: x.get("sampled", False))]
 print("After dedup: ", len(battles))
 battles = battles.sort_values(ascending=True, by=["tstamp"])
+
+if args.classifier:
+    model_name_classifier = ['llama-2-7b-chat', 'llama-2-13b-chat', 'llama-3-8b-instruct', 'command-r', 'gpt-4o-mini-2024-07-18',\
+                 'mistral-7b-instruct-v0.2', 'mistral-7b-instruct', \
+                  'gemma-2-27b-it', 'gemma-2b-it', 'gemma-2-9b-it',\
+                     'qwen1.5-7b-chat', 'qwen1.5-14b-chat', 'starling-lm-7b-alpha', 'starling-lm-7b-beta', 'yi-34b-chat','yi-1.5-34b-chat',\
+                        'chatglm3-6b', 'zephyr-7b-beta', 'zephyr-7b-alpha', 'phi-3-small-8k-instruct', \
+                            'vicuna-7b', 'mpt-7b-chat', 'openchat-3.5', 'wizardlm-13b', 'solar-10.7b-instruct-v1.0']
+    
+    battles = battles[battles["language"] == 'English']
+    battle_list = []
+    for model_id in model_name_classifier:
+        battle_list.append(battles[battles["model_a"] == model_id])
+    battles = pd.concat(battle_list)
+
+
+    battle_list = []
+    for model_id in model_name_classifier:
+        battle_list.append(battles[battles["model_b"] == model_id])
+    battles = pd.concat(battle_list)
 
 model_name_sorted = []
 for model in battles["model_a"]:
@@ -75,15 +101,21 @@ battle_vh_dict = {}
 for idx,item in enumerate(battle_vh_list):
     battle_vh_dict[idx] = {'model_a':item['model_a'], 'model_b':item['model_b'], 'winner':item['winner'],'tokens_a':tokens_a, 'tokens_b':tokens_b}
 
+if args.classifier:
+    with open(f'data/vo_classifier.json', 'w') as f:
+        json.dump(battle_vo_dict, f, indent=4)
 
-with open(f'data/vo.json', 'w') as f:
-    json.dump(battle_vo_dict, f, indent=4)
+    with open(f'data/vh_classifier.json', 'w') as f:
+        json.dump(battle_vh_dict, f, indent=4)
+else:
+    with open(f'data/vo.json', 'w') as f:
+        json.dump(battle_vo_dict, f, indent=4)
 
-with open(f'data/vh.json', 'w') as f:
-    json.dump(battle_vh_dict, f, indent=4)
+    with open(f'data/vh.json', 'w') as f:
+        json.dump(battle_vh_dict, f, indent=4)
 
 
-elo_ratings, _ = initialize_vh_vo(model_name_sorted, battle_vh_list)
+elo_ratings, _ = initialize_vh_vo(model_name_sorted, battle_vh_list,classifier=args.classifier)
 initial_ranking = preety_print_model_ratings(elo_ratings)
 
 

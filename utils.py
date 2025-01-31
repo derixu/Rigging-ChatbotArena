@@ -12,7 +12,7 @@ SCALE = 400
 
 
 def initialize_vh_vo(
-    model_name_sorted, competition_list, SCALE=400, BASE=10, INIT_RATING=1000, ptbl_win=None
+    model_name_sorted, competition_list, SCALE=400, BASE=10, INIT_RATING=1000, ptbl_win=None, classifier=False
 ):
     from sklearn.linear_model import LogisticRegression
   
@@ -67,10 +67,14 @@ def initialize_vh_vo(
             cur_row += 2
     X = X[:cur_row]
     Y = Y[:cur_row]
-   
-    np.save('data/data_x.npy', X)
-    np.save('data/data_y.npy', Y)
-    ptbl_win.to_csv('data/vh_win_matrix.csv')
+    if classifier:
+        np.save('data/data_x_classifier.npy', X)
+        np.save('data/data_y_classifier.npy', Y)
+        ptbl_win.to_csv('data/vh_win_matrix_classifier.csv')
+    else:
+        np.save('data/data_x.npy', X)
+        np.save('data/data_y.npy', Y)
+        ptbl_win.to_csv('data/vh_win_matrix.csv')
 
     lr = LogisticRegression(fit_intercept=False, penalty=None, tol=1e-6, warm_start=True)
     lr.fit(X, Y, sample_weight=sample_weights)
