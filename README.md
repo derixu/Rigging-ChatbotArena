@@ -1,4 +1,6 @@
 ## Improving Your Model Ranking on Chatbot Arena by Vote Rigging
+This repository contains the official implementation of [Improving Your Model Ranking on Chatbot Arena by Vote Rigging](https://arxiv.org/abs/2501.17858)
+
 
 ----
 <div align=center><img src=pics/demo.png  width="80%" height="60%"></div>
