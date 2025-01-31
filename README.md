@@ -30,17 +30,17 @@ python rigging_with_vo.py --rigging_mode omni_bt_diff
 By default, the maximum number of other users' votes is 100,000.
 
 ### How to rig with the multi-class classifier
-First, switch to the [classifier](classifier) directory and initialize the voting environment with the following command:
+First, initialize the voting environment with the following command:
 ```cmd
 python initial_env.py --classifier
 ```
 To generate the training corpus, you could run the following example command that queries [Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B) using the prompt from the [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3) dataset:
 ```
-python dataset_cur.py --output_dir hc3 --model_id meta-llama/Meta-Llama-3-8B-Instruct
+python classifier/dataset_cur.py --output_dir hc3 --model_id meta-llama/Meta-Llama-3-8B-Instruct
 ```
 With the prepared training corpus, try to run the following script to fine-tune a RoBERTa-based model:
 ```
-python train.py --dataset hc3
+python classifier/train.py --dataset hc3
 ```
 Then, you could rig with the multi-class classifier with the following demo code:
 ```
