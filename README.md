@@ -4,7 +4,7 @@ This repository contains the official implementation of [Improving Your Model Ra
 
 ----
 
-<div align=center><img src=pics/demo.png  width="80%" height="60%"></div>
+<div align=center><img src=pics/demo.png width="80%" height="60%"></div>
 
 We simulate rigging on new votes beyond the $$\sim$$ *1.7 million* historical votes from the Chatbot Arena Notebook. In this demo, we set the target model $$m_t$$ as Phi-3-small-8k-Instruct. Under the normal voting distribution (w/o rigging), the ranking remains steady, showing only a single rank increase despite the addition of approximately 27,000 new votes. In contrast, vote rigging significantly boosts $$m_t$$'s ranking. Using the omnipresent strategy, we achieve a 15-rank improvement while being more efficient compared to the target-only strategy.
 
