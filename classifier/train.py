@@ -69,7 +69,7 @@ def main(args: argparse.Namespace):
     
     for model_id in model_name_list:
        
-        file_name = f'./training_data_classifier/{args.dataset}/{model_id}.json'
+        file_name = f'./classifier/training_data_classifier/{args.dataset}/{model_id}.json'
         with open(file_name) as f:
             data = json.load(f)
             for i in range(args.data_size):
@@ -85,7 +85,7 @@ def main(args: argparse.Namespace):
     
 
     for model_id in model_name_list:
-        file_name = f'./training_data_classifier/{args.dataset}/{model_id}.json'
+        file_name = f'./classifier/training_data_classifier/{args.dataset}/{model_id}.json'
         with open(file_name) as f:
             data = json.load(f)
             for i in range(args.data_size, args.data_size+args.eval_size):
@@ -114,7 +114,7 @@ def main(args: argparse.Namespace):
 
     model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=len(model_name_list), device_map='auto')
 
-    output_dir = f"./models/{args.dataset}/class_{args.data_size}/"  # checkpoint save path
+    output_dir = f"./classifier/models/{args.dataset}/class_{args.data_size}/"  # checkpoint save path
   
     os.makedirs(output_dir, exist_ok=True)
     training_args = TrainingArguments(
