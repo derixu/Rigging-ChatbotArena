@@ -6,7 +6,7 @@ This repository contains the official implementation of [Improving Your Model Ra
 <div align=center><img src=pics/demo.png  width="80%" height="60%"></div>
 
 ### Initialize your rigging environment
-Run the following command to set up your initial rigging environment, we separate the complete voting records into the historical votes (90%) and other users' votes (10%).
+To set up the initial rigging environment, you could run the following command to separate the complete voting records into the historical votes (90%), which are used to generate the initially simulated leaderboard, and other users' votes (10%), which are used to explore the impact of concurrent voting from other users.
 ```cmd
 python initial_env.py
 ```
@@ -14,13 +14,14 @@ python initial_env.py
 ### How to conduct vote rigging
 You could directly run the following command to obtain the results under the idealized rigging scenario:
 ```cmd
-python vote_rigging.py --rigging_mode omni_bt_diff
+python vote_rigging.py --rigging_mode omni_bt_diff --classifier_acc 1.0 --beta 1.0
 ```
 The default rigging strategy is Omni-BT, and we also support other rigging strategies specified by ```--rigging_mode```. Besides, you could set ```--classifier_acc``` to control the classification performance of de-anonymizing functions and set ```--beta``` to control the marginal probability of sampling the target model. If you want to explore the impact of concurrent votes from other users, you may run the following command:
 
 ```
 python rigging_with_vo.py --rigging_mode omni_bt_diff
 ```
+
 
 ### How to train the multi-class classifier
 First, switch to the [classifier](classifier) directory. To generate the training corpus, you could run the following example command that queries [Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B) using the prompt from the [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3) dataset:
