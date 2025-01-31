@@ -5,11 +5,16 @@ This repository contains the official implementation of [Improving Your Model Ra
 ----
 <div align=center><img src=pics/demo.png  width="80%" height="60%"></div>
 
+We simulate rigging on new votes beyond the $$\sim$$ *1.7 million* historical votes from the Chatbot Arena Notebook. In this demo, we set the target model $$m_t$$ as Phi-3-small-8k-Instruct. Under the normal voting distribution (w/o rigging), the ranking remains steady, showing only a single rank increase despite the addition of approximately 27,000 new votes. In contrast, vote rigging significantly boosts $$m_t$$'s ranking. Using the omnipresent strategy, we achieve a 15-rank improvement while being more efficient compared to the target-only strategy.
+
+----
+
 ### Initialize your rigging environment
 To set up the initial rigging environment, you could run the following command to separate the complete voting records into the historical votes (90%), which are used to generate the initially simulated leaderboard, and other users' votes (10%), which are used to explore the impact of concurrent voting from other users.
 ```cmd
 python initial_env.py
 ```
+
 
 ### How to conduct vote rigging
 You could directly run the following command to obtain the results under the idealized rigging scenario:
