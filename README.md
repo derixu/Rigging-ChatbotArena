@@ -21,12 +21,12 @@ You could directly run the following command to obtain the results under the ide
 ```cmd
 python vote_rigging.py --rigging_mode omni_bt_diff --classifier_acc 1.0 --beta 1.0
 ```
-The default rigging strategy is Omni-BT, and we also support other rigging strategies specified by ```--rigging_mode```. Besides, you could set ```--classifier_acc``` to control the classification performance of de-anonymizing functions and set ```--beta``` to control the marginal probability of sampling the target model. If you want to explore the impact of concurrent votes from other users, you may run the following command:
+The default rigging strategy is Omni-BT, and we also support other rigging strategies specified by ```--rigging_mode```. Specifically, we support **t_random** for T-Random; **t_tie** for T-Tie; **t_normal** for T-Normal; **t_abstain** for T-Abstain; **omni_on** for Omni-On; **omni_bt_diff** for Omni-BT (Relative); **omni_bt_abs** for Omni-BT (Absolute). Besides, you could set ```--classifier_acc``` to control the classification performance of de-anonymizing functions and set ```--beta``` to control the marginal probability of sampling the target model. If you want to explore the impact of concurrent votes from other users, you may run the following command:
 
 ```
 python rigging_with_vo.py --rigging_mode omni_bt_diff
 ```
-
+By default, the maximum number of other users' votes is 100,000.
 
 ### How to train the multi-class classifier
 First, switch to the [classifier](classifier) directory. To generate the training corpus, you could run the following example command that queries [Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B) using the prompt from the [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3) dataset:
