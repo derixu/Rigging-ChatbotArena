@@ -49,6 +49,34 @@ if args.rigging_mode == 'omni_bt_diff':
 else:
     diff_weight = 0
 
+
+win_dict = {}
+for model in model_name_sorted:
+    win_dict[model] = {}
+
+for model_a in model_name_sorted:
+    for model_b in model_name_sorted:
+        if model_a != model_b:
+            win_dict[model_a][model_b] = {'win': 0, 'lose': 0, 'tie': 0}
+
+
+with open(f'data/vh.json') as f:
+    vh_dict = json.load(f)
+print(len(vh_dict.keys()))
+for key_idx in vh_dict:
+    model_a = vh_dict[key_idx]['model_a']
+    model_b = vh_dict[key_idx]['model_b']
+    winner = vh_dict[key_idx]['winner']
+    if winner == 'model_a':
+        win_dict[model_a][model_b]['win'] += 1
+        win_dict[model_b][model_a]['lose'] += 1
+    elif winner == 'model_b':
+        win_dict[model_a][model_b]['lose'] += 1
+        win_dict[model_b][model_a]['win'] += 1
+    elif 'tie' in winner:
+        win_dict[model_a][model_b]['tie'] += 1
+        win_dict[model_b][model_a]['tie'] += 1
+
 # --------------------------------------------------------------------------------------------------------------------
 
 
@@ -79,8 +107,8 @@ for target_model in args.model_name_list:
         acc_var = np.random.uniform()
         # --------------------------------------------------------------------------------------------------------------------
         # Rigging strategies
-
-        if args.rigging_mode == 't_random' or args.rigging_mode == 't_tie':
+        
+        if args.rigging_mode == 't_random' or args.rigging_mode == 't_tie' or args.rigging_mode == 't_normal':
             if (model_b == target_model or model_a == target_model) and acc_var <= args.classifier_acc:
                 decision = 'model_b' if model_b == target_model else 'model_a'
             else:
@@ -95,6 +123,30 @@ for target_model in args.model_name_list:
                         decision = 'remove'
                 elif args.rigging_mode == 't_tie':
                     decision = 'tie'
+                elif args.rigging_mode == 't_normal':
+                    if args.classifier_acc < 1:
+                        tmp_model_name_sorted = copy.deepcopy(model_name_sorted)
+                        tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_a))
+                        tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_b))
+                        pred_model_a = np.random.choice(tmp_model_name_sorted)
+                        pred_model_b = np.random.choice(tmp_model_name_sorted)
+                    else:
+                        pred_model_a, pred_model_b = model_a, model_b
+
+                    win_rate_base = win_dict[pred_model_a][pred_model_b]['win'] + win_dict[pred_model_a][pred_model_b]['lose'] + win_dict[pred_model_a][pred_model_b]['tie']
+                    if (win_rate_base) != 0 :
+                        win_rate = win_dict[pred_model_a][pred_model_b]['win']/win_rate_base
+                        lose_rate = win_dict[pred_model_a][pred_model_b]['lose']/win_rate_base
+                        tie_rate = win_dict[pred_model_a][pred_model_b]['tie']/win_rate_base
+
+                        decision = np.random.choice(['model_a', 'model_b', 'tie'], p=[win_rate, lose_rate, tie_rate])
+                    else:
+                        win_prob_a = 1 / (1 + BASE ** ((initial_rating[pred_model_b] - initial_rating[pred_model_a]) / SCALE))
+
+                        if vote_var > win_prob_a:
+                            decision = 'model_b'
+                        else:
+                            decision = 'model_a'
             
             current_battle['winner'] = decision
             final_ranking, sample_weights_tmp = compute_mle_elo_dict([current_battle], X=X_initial, Y=Y_initial, ptbl_win=win_matrix_initial, sample_weights=copy.deepcopy(sample_weights_tmp))

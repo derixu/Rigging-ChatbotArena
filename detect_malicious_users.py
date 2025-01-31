@@ -117,7 +117,7 @@ for target_model in args.model_name_list:
                 elif 'tie' in adv_decision:
                     p_x_adv += math.log(tie_rate) * -2
 
-                real_decision = np.random.choice(['model_a', 'model_b', 'tie'], p=[win_rate, lose_rate, 1-win_rate-lose_rate])
+                real_decision = np.random.choice(['model_a', 'model_b', 'tie'], p=[win_rate, lose_rate, tie_rate])
 
                 if real_decision == 'model_a':
                     p_x_real += math.log(win_rate) * -2
