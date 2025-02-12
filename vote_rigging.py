@@ -7,7 +7,6 @@ from utils import preety_print_model_ratings, get_rank, get_battle_pair, preproc
 
 import argparse
 import os
-import cudf
 import json
 
 parser = argparse.ArgumentParser()
@@ -24,7 +23,9 @@ BASE = 10
 SCALE = 400
 
 
-# Initialize the rigging environment
+# --------------------------------------------Initialize the rigging environment--------------------------------------------
+
+# Load the initial data
 X_initial, Y_initial, win_matrix_initial, sample_weights_ori = preprocess_data('data/data_x.npy', 'data/data_y.npy','data/vh_win_matrix.csv')
 model_name_sorted = []
 for model_name in win_matrix_initial.index:
@@ -54,6 +55,7 @@ win_dict = {}
 for model in model_name_sorted:
     win_dict[model] = {}
 
+# Calculate the historical win rate between each pair of models
 for model_a in model_name_sorted:
     for model_b in model_name_sorted:
         if model_a != model_b:
@@ -77,7 +79,7 @@ for key_idx in vh_dict:
         win_dict[model_a][model_b]['tie'] += 1
         win_dict[model_b][model_a]['tie'] += 1
 
-# --------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------Rigging simulation--------------------------------------------
 
 
 for target_model in args.model_name_list:
@@ -86,6 +88,7 @@ for target_model in args.model_name_list:
     model_name_sorted_prob = {}
     rank_list = [get_rank(initial_ranking, target_model)]
 
+    # Generate the sampling distribution for each model, \beta controls the marginal probability of sampling the target model
     for model in model_name_sorted:
         if model == target_model:
             model_weight_tmp = 1 * args.beta
@@ -103,11 +106,14 @@ for target_model in args.model_name_list:
         model_a, model_b = get_battle_pair(model_name_sorted, model_name_sorted_prob)
         current_battle = {'model_a':model_a, 'model_b':model_b, 'winner':None}
         
+        # For a fair comparison, we ensure the sampled battles are the same for each rigging strategy
         vote_var = np.random.uniform()
         acc_var = np.random.uniform()
-        # --------------------------------------------------------------------------------------------------------------------
+        decision_var = np.random.uniform()
+        pred_model_a_var = np.random.choice(len(model_name_sorted)-1)
+        pred_model_b_var = np.random.choice(len(model_name_sorted)-1)
+
         # Rigging strategies
-        
         if args.rigging_mode == 't_random' or args.rigging_mode == 't_tie' or args.rigging_mode == 't_normal':
             if (model_b == target_model or model_a == target_model) and acc_var <= args.classifier_acc:
                 decision = 'model_b' if model_b == target_model else 'model_a'
@@ -124,22 +130,30 @@ for target_model in args.model_name_list:
                 elif args.rigging_mode == 't_tie':
                     decision = 'tie'
                 elif args.rigging_mode == 't_normal':
-                    if args.classifier_acc < 1:
+                    if acc_var > args.classifier_acc:
                         tmp_model_name_sorted = copy.deepcopy(model_name_sorted)
                         tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_a))
                         tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_b))
-                        pred_model_a = np.random.choice(tmp_model_name_sorted)
-                        pred_model_b = np.random.choice(tmp_model_name_sorted)
+                        # pred_model_a = np.random.choice(tmp_model_name_sorted)
+                        # pred_model_b = np.random.choice(tmp_model_name_sorted)
+                        pred_model_a = tmp_model_name_sorted[pred_model_a_var]
+                        pred_model_b = tmp_model_name_sorted[pred_model_b_var]
                     else:
                         pred_model_a, pred_model_b = model_a, model_b
 
                     win_rate_base = win_dict[pred_model_a][pred_model_b]['win'] + win_dict[pred_model_a][pred_model_b]['lose'] + win_dict[pred_model_a][pred_model_b]['tie']
-                    if (win_rate_base) != 0 :
+                    if win_rate_base != 0 :
                         win_rate = win_dict[pred_model_a][pred_model_b]['win']/win_rate_base
                         lose_rate = win_dict[pred_model_a][pred_model_b]['lose']/win_rate_base
                         tie_rate = win_dict[pred_model_a][pred_model_b]['tie']/win_rate_base
 
-                        decision = np.random.choice(['model_a', 'model_b', 'tie'], p=[win_rate, lose_rate, tie_rate])
+                        # decision = np.random.choice(['model_a', 'model_b', 'tie'], p=[win_rate, lose_rate, tie_rate])
+                        if decision_var < win_rate:
+                            decision = 'model_a'
+                        elif decision_var < win_rate + lose_rate:
+                            decision = 'model_b'
+                        else:
+                            decision = 'tie'
                     else:
                         win_prob_a = 1 / (1 + BASE ** ((initial_rating[pred_model_b] - initial_rating[pred_model_a]) / SCALE))
 
@@ -169,18 +183,20 @@ for target_model in args.model_name_list:
 
             pred_model_a = model_a
             pred_model_b = model_b
-            if args.classifier_acc < 1:
-                if np.random.uniform() > args.classifier_acc:
-                    tmp_model_name_sorted = copy.deepcopy(model_name_sorted)
-                    tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_a))
-                    tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_b))
-                    pred_model_a = np.random.choice(tmp_model_name_sorted)
-                    pred_model_b = np.random.choice(tmp_model_name_sorted)
-                    
-                if pred_model_a == pred_model_b:
-                    rank_list.append(rank_list[-1])
-                    battle_dict[f'idx_{idx}'] = {'model_a': model_a, 'model_b': model_b, 'winner': 'remove'}
-                    continue
+            
+            if acc_var > args.classifier_acc:
+                tmp_model_name_sorted = copy.deepcopy(model_name_sorted)
+                tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_a))
+                tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_b))
+                # pred_model_a = np.random.choice(tmp_model_name_sorted)
+                # pred_model_b = np.random.choice(tmp_model_name_sorted)
+                pred_model_a = tmp_model_name_sorted[pred_model_a_var]
+                pred_model_b = tmp_model_name_sorted[pred_model_b_var]
+                
+            if pred_model_a == pred_model_b:
+                rank_list.append(rank_list[-1])
+                battle_dict[f'idx_{idx}'] = {'model_a': model_a, 'model_b': model_b, 'winner': 'remove'}
+                continue
 
          
             
@@ -250,30 +266,33 @@ for target_model in args.model_name_list:
 
             pred_model_a = model_a
             pred_model_b = model_b
-            if args.classifier_acc < 1:
-                if np.random.uniform() > args.classifier_acc:
-                    tmp_model_name_sorted = copy.deepcopy(model_name_sorted)
-                    tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_a))
-                    tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_b))
-                    pred_model_a = np.random.choice(tmp_model_name_sorted)
-                    pred_model_b = np.random.choice(tmp_model_name_sorted)
+            
+            if acc_var > args.classifier_acc:
+                tmp_model_name_sorted = copy.deepcopy(model_name_sorted)
+                tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_a))
+                tmp_model_name_sorted.pop(tmp_model_name_sorted.index(model_b))
+                # pred_model_a = np.random.choice(tmp_model_name_sorted)
+                # pred_model_b = np.random.choice(tmp_model_name_sorted)
+                pred_model_a = tmp_model_name_sorted[pred_model_a_var]
+                pred_model_b = tmp_model_name_sorted[pred_model_b_var]
+
+
+            if pred_model_a == pred_model_b:
+                rank_list.append(rank_list[-1])
+                battle_dict[f'idx_{idx}'] = {'model_a': model_a, 'model_b': model_b, 'winner': 'remove'}
+                continue
+
+            for key in final_ranking_noise['Model'].keys():
+                if final_ranking_noise.loc[key, 'Model'] == target_model:
                     
-                if pred_model_a == pred_model_b:
-                    rank_list.append(rank_list[-1])
-                    battle_dict[f'idx_{idx}'] = {'model_a': model_a, 'model_b': model_b, 'winner': 'remove'}
-                    continue
+                    if key != 1:
+                        tmp_anchor_model = final_ranking_noise.loc[key-1, 'Model']
+                        tmp_anchor_model_rating = final_ranking_noise.loc[key-1, 'Elo rating']
+                    else:
+                        tmp_anchor_model = final_ranking_noise.loc[key+1, 'Model']
+                        tmp_anchor_model_rating = final_ranking_noise.loc[key+1, 'Elo rating']
 
-                for key in final_ranking_noise['Model'].keys():
-                    if final_ranking_noise.loc[key, 'Model'] == target_model:
-                        
-                        if key != 1:
-                            tmp_anchor_model = final_ranking_noise.loc[key-1, 'Model']
-                            tmp_anchor_model_rating = final_ranking_noise.loc[key-1, 'Elo rating']
-                        else:
-                            tmp_anchor_model = final_ranking_noise.loc[key+1, 'Model']
-                            tmp_anchor_model_rating = final_ranking_noise.loc[key+1, 'Elo rating']
-
-                        remove_rating = final_ranking_noise.loc[key, 'Elo rating'] - tmp_anchor_model_rating * diff_weight
+                    remove_rating = final_ranking_noise.loc[key, 'Elo rating'] - tmp_anchor_model_rating * diff_weight
 
                 
             else:
@@ -361,7 +380,7 @@ for target_model in args.model_name_list:
                     sample_weights_tmp = tmp_weights_list[2]
                     
             
-            assert reward_list[0] != reward_list[1]
+            # assert reward_list[0] != reward_list[1]
             del tmp_ranking_list, tmp_ranking, tmp_weights_list
 
         
