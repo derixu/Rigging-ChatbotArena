@@ -8,8 +8,9 @@ from datasets import load_dataset
 parser = argparse.ArgumentParser()
 parser.add_argument('--tot_num', type=int, default=6000)
 parser.add_argument('--max_length', type=int, default=512, help='max_length')
-parser.add_argument("--output_dir", type=str)
+parser.add_argument("--dataset_name", type=str)
 parser.add_argument('--model_id', type=str)
+parser.add_argument('--output_dir', type=str, default='training_data_classifier')
 parser.add_argument("--resume", action="store_true", default=False)
 args = parser.parse_args()
 
@@ -18,11 +19,11 @@ args = parser.parse_args()
 def main():
     
     
-    os.makedirs(args.output_dir, exist_ok=True)
+    os.makedirs(args.dataset_name, exist_ok=True)
    
-    if args.output_dir == 'hc3':
+    if args.dataset_name == 'hc3':
         dataset = load_dataset('Hello-SimpleAI/HC3', name='all', split='train') # 24322
-    elif args.output_dir == 'quora':
+    elif args.dataset_name == 'quora':
         dataset = load_dataset('toughdata/quora-question-answer-dataset', split='train') # 56402
    
     
@@ -65,11 +66,11 @@ def main():
 
     print(model_name)
 
-    if os.path.exists(f'./classifier/training_data_classifier/{args.output_dir}/{model_name}.json') and args.resume: #
-        with open(f'{args.output_dir}/{model_name}.json') as f:
+    if os.path.exists(f'./classifier/{args.output_dir}/{args.dataset_name}/{model_name}.json') and args.resume: #
+        with open(f'{args.dataset_name}/{model_name}.json') as f:
             tot_dict = json.load(f)
     else:
-        os.makedirs(f'./classifier/training_data_classifier/{args.output_dir}/', exist_ok=True)
+        os.makedirs(f'./classifier/{args.output_dir}/{args.dataset_name}/', exist_ok=True)
         tot_dict = {}
     resume_point = len(tot_dict) - 1
     
@@ -132,7 +133,7 @@ def main():
        
         output_string = output.strip()
 
-        if args.output_dir == 'hc3':
+        if args.dataset_name == 'hc3':
             result_dict = {'question': question, 'response': output_string, 'model': model_name, 'source': data['source'], 'length':token_num} # HC3
         else:
             result_dict = {'question': question, 'response': output_string, 'model': model_name, 'length':token_num}
@@ -145,8 +146,8 @@ def main():
         
         tot_dict[f'id_{idx}'] = result_dict
         
-        os.makedirs(f'./classifier/training_data_classifier/{args.output_dir}', exist_ok=True)
-        with open(f'./classifier/training_data_classifier/{args.output_dir}/{model_name}.json', 'w') as f:
+        os.makedirs(f'./classifier/{args.output_dir}/{args.dataset_name}', exist_ok=True)
+        with open(f'./classifier/{args.output_dir}/{args.dataset_name}/{model_name}.json', 'w') as f:
             json.dump(tot_dict, f, indent=4)
         if idx == args.tot_num-1:
             break
