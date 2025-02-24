@@ -40,8 +40,7 @@ battles = battles.sort_values(ascending=True, by=["tstamp"])
 
 if args.classifier:
     model_name_classifier = ['llama-2-7b-chat', 'llama-2-13b-chat', 'llama-3-8b-instruct', 'command-r', 'gpt-4o-mini-2024-07-18',\
-                 'mistral-7b-instruct-v0.2', 'mistral-7b-instruct', \
-                  'gemma-2-27b-it', 'gemma-2b-it', 'gemma-2-9b-it',\
+                 'mistral-7b-instruct-v0.2', 'mistral-7b-instruct', 'gemma-2-27b-it', 'gemma-2b-it', 'gemma-2-9b-it', \
                      'qwen1.5-7b-chat', 'qwen1.5-14b-chat', 'starling-lm-7b-alpha', 'starling-lm-7b-beta', 'yi-34b-chat','yi-1.5-34b-chat',\
                         'chatglm3-6b', 'zephyr-7b-beta', 'zephyr-7b-alpha', 'phi-3-small-8k-instruct', \
                             'vicuna-7b', 'mpt-7b-chat', 'openchat-3.5', 'wizardlm-13b', 'solar-10.7b-instruct-v1.0']
