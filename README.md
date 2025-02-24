@@ -42,7 +42,7 @@ With the prepared training corpus, try to run the following script to fine-tune 
 ```
 python classifier/train.py --dataset_name hc3
 ```
-In addition to generating the training corpus, you may need to separately generate simulated responses for rigging by running the ```classifier/dataset_cur.py``` script and saving new content into the ```classifier/rigging_data_classifier``` directory. Then, you could rig with the multi-class classifier using the following demo code:
+In addition to generating the training corpus, you may need to separately generate simulated responses for rigging by running the ```classifier/dataset_cur.py``` script and saving new content into the ```classifier/rigging_data_classifier``` directory (specified by parameter ```--output_dir```). Then, you could rig with the multi-class classifier using the following demo code:
 ```
 python vote_rigging_classifier.py --dataset_name hc3 --model_path [REPLACE THIS WITH YOUR OWN MODEL PATH]
 ```
