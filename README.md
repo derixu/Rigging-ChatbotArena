@@ -34,7 +34,7 @@ First, initialize the voting environment with the following command:
 ```cmd
 python initial_env.py --classifier
 ```
-To generate the training corpus, you could run the following example command that queries [Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B) using the prompt from the [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3) dataset:
+To generate the training corpus, you could run the following example command that queries [Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B) using the prompt from the [HC3](https://huggingface.co/datasets/Hello-SimpleAI/HC3) dataset. By default, generation contents will be saved into ```classifier/training_data_classifier```:
 ```
 python classifier/dataset_cur.py --output_dir hc3 --model_id meta-llama/Meta-Llama-3-8B-Instruct
 ```
@@ -42,7 +42,7 @@ With the prepared training corpus, try to run the following script to fine-tune 
 ```
 python classifier/train.py --dataset hc3
 ```
-Then, you could rig with the multi-class classifier with the following demo code:
+In addition to generating the training corpus, you may need to separately generate simulated responses for rigging by running the ```classifier/dataset_cur.py``` script and saving new content into the ```classifier/rigging_data_classifier``` directory. Then, you could rig with the multi-class classifier using the following demo code:
 ```
 python vote_rigging_classifier.py --dataset hc3 --model_path [REPLACE THIS WITH YOUR OWN MODEL PATH]
 ```
