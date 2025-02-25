@@ -38,7 +38,7 @@ To generate the training corpus, you could run the following example command tha
 ```
 python classifier/dataset_cur.py --dataset_name hc3 --model_id meta-llama/Meta-Llama-3-8B-Instruct
 ```
-With the prepared training corpus, try to run the following script to fine-tune a RoBERTa-based model:
+With the prepared training corpus, try to run the following script to fine-tune a RoBERTa-based model (We also provide pretrained checkpoint on HC3 and Quora datasets respectively at this [link](https://drive.google.com/drive/folders/1sQzSebRPeaWrF8WpVie5Aftgo6IftxYr?usp=drive_link)):
 ```
 python classifier/train.py --dataset_name hc3
 ```
