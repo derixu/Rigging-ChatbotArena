@@ -15,7 +15,7 @@ parser.add_argument('--beta', type=float, default=1.0)
 parser.add_argument('--vote_num', type=int, default=20000)
 parser.add_argument('--seed', type=int, default=2025)
 parser.add_argument('--classifier_acc', type=float, default=1.0)
-parser.add_argument('--model_name_list', nargs='+', default=['phi-3-mini-4k-instruct-june-2024'])
+parser.add_argument('--model_name_list', nargs='+', default=['gpt-4o-2024-05-13'])
 args = parser.parse_args()
 
 K = 4
