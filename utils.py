@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 pd.options.display.float_format = '{:.2f}'.format
 from tqdm import tqdm
-import cudf
+# import cudf
 
 # Global variables
 K = 4
@@ -106,9 +106,9 @@ def preprocess_data(X_initial_path, Y_initial_path, win_matrix_initial_path):
             sample_weights.append(win_matrix_initial.loc[m_a, m_b])
             sample_weights.append(win_matrix_initial.loc[m_b, m_a])
     
-    sample_weights = cudf.Series(sample_weights)
-    X_initial = cudf.DataFrame(X_initial)
-    Y_initial = cudf.Series(Y_initial)
+    sample_weights = pd.Series(sample_weights)
+    X_initial = pd.DataFrame(X_initial)
+    Y_initial = pd.Series(Y_initial)
 
     return X_initial, Y_initial, win_matrix_initial, sample_weights
 
