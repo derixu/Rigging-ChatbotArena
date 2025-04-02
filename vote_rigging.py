@@ -400,7 +400,7 @@ for target_model in args.model_name_list:
     os.makedirs('voting_output/', exist_ok=True)
 
     np.save(f'ranking_output/{target_model}_{args.rigging_mode}_acc_{args.classifier_acc}_prob_dec_{args.beta}.npy', np.array(rank_list))
-    with open(f'voting_output/{target_model}_{args.rigging_mode}_acc_{args.classifier_acc}_prob_dec_{args.beta}.json', 'w') as f:
+    with open(f'voting_output/{target_model}_{args.rigging_mode}_acc_{args.classifier_acc}_prob_dec_{args.beta}_vote_num_{args.vote_num}.json', 'w') as f:
         json.dump(battle_dict, f, indent=4)
 
 
