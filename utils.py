@@ -116,7 +116,7 @@ def compute_mle_elo_dict(
     competition_list, X, Y, SCALE=400, INIT_RATING=1000, ptbl_win=None, sample_weights=None
 ):
    
-    from cuml.linear_model import LogisticRegression
+    from sklearn.linear_model import LogisticRegression
     for item in competition_list:
        
         model_a = item['model_a']
