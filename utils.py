@@ -155,7 +155,7 @@ def compute_mle_elo_dict(
     models = pd.Series(np.arange(len(ptbl_win.index)), index=ptbl_win.index)
     lr = LogisticRegression(fit_intercept=False, penalty=None, tol=1e-6)
     lr.fit(X, Y, sample_weight=sample_weights)
-    elo_scores = SCALE * lr.coef_.to_numpy()[0] + INIT_RATING
+    elo_scores = SCALE * lr.coef_[0] + INIT_RATING
     return pd.Series(elo_scores, index=models.index).sort_values(ascending=False), sample_weights
 
 def get_rank(ranking, target_model):
